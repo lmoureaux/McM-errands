@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: Louis Moureaux <louis.moureaux@cern.ch>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+[tool.poetry]
+name = "McM"
+version = "0.1.0"
+description = ""
+authors = ["Louis Moureaux"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+connexion = "^2.14.2"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.3.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
