@@ -68,7 +68,7 @@ components:
           description: FIXME doesn't seem to be used anywhere.
         meeting:
           type: string
-          format: ^date$
+          format: date
           description:
             The date of the MccM meeting in which this request will be handled, as `YYYY-MM-DD`.
         history:
@@ -87,15 +87,15 @@ components:
           description: The PWG this ticket was created for.
         requests:
           type: array
-          minItems: 1
           items:
-            type: array
-            items:
-              type: string
+            anyOf:
+            - type: string
+            - type: array
+              items:
+                type: string
           description: The prepId of all (root) requests in this ticket.
         chains:
           type: array
-          minItems: 1
           items:
             type: string
           description: |
