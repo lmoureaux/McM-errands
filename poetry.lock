@@ -257,6 +257,17 @@ dev = ["pre-commit", "tox"]
 testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
+name = "pycouchdb"
+version = "1.14.2"
+description = "Modern pure python CouchDB Client."
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
+
+[package.dependencies]
+requests = ">=2.25,<3.0"
+
+[[package]]
 name = "pyrsistent"
 version = "0.19.3"
 description = "Persistent/Functional/Immutable data structures"
@@ -358,7 +369,7 @@ watchdog = ["watchdog"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "31d7007c81488dc47e3d964c820f82fbf6eb7d14cbf70f526913f6af2d0dc6ac"
+content-hash = "fbffaee38d293794a5209c543076a6eedbf5a0216027a63d5a90c0dd2fd3e027"
 
 [metadata.files]
 attrs = []
@@ -383,6 +394,7 @@ packaging = []
 pathspec = []
 platformdirs = []
 pluggy = []
+pycouchdb = []
 pyrsistent = []
 pytest = []
 pyyaml = []
