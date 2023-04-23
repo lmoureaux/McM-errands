@@ -68,7 +68,7 @@ components:
           description: FIXME doesn't seem to be used anywhere.
         meeting:
           type: string
-          pattern: ^20\d{2}-[01]\d-[0-3]\d$
+          format: ^date$
           description:
             The date of the MccM meeting in which this request will be handled, as `YYYY-MM-DD`.
         history:
