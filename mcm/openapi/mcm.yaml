@@ -6,31 +6,27 @@ info:
     title: McM
     version: 0.1.0
 paths:
-  /tickets/{prepIds}:
+  /tickets/{prepId}:
     get:
       description: Returns a ticket based on its prepId
       summary: Find ticket by prepId
       responses:
         '200':
-          description: Retrieved tickets
+          description: Retrieved ticket
           content:
             'application/json' :
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Ticket'
+                $ref: '#/components/schemas/Ticket'
         default:
           $ref: https://raw.githubusercontent.com/ietf-wg-httpapi/rfc7807bis/main/schema/json/problem.json
     parameters:
-    - name: prepIds
+    - name: prepId
       in: path
       description: ID of tickets to retrieve
       required: true
       schema:
-        type: array
-        items:
-          type: string
-      style: simple
+        type: string
+        pattern: "^[0-9A-Z]{3}-\\d{4}(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\d{2}-\\d{5}$"
 
 components:
   schemas:
