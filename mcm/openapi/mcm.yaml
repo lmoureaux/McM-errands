@@ -6,3 +6,158 @@ info:
     title: McM
     version: 0.1.0
 paths: {}
+components:
+  schemas:
+    Ticket:
+      description: |
+        MccM "tickets" are used to propose requests for submissions. They are presented to PdmV at a MccM
+        meeting by MC contacts, and thereafter operated by a MC manager. A ticket contains a list of
+        root requests to be processed (that have been written with love by the MC contact) and the
+        chained campaigns (usually only one) in which they will be instantiated. The requests should
+        already have been checked by GEN and validated.
+
+        "Operation" by the MC manager means creating a chained requests based on the flows and campaigns
+        in the chained campaign, which can then be submitted to computing.
+      type: object
+      properties:
+        _id:
+          type: string
+          pattern: ^[A-Z]{3}-\d{4}(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\d{2}-\d{5}$
+          description: |
+            A unique identifier for the MccM ticket. The naming convention is PWG-2023Feb13-00001, with
+            the PWG form the `pwg` field, the date from the `meeting` field, and an automatically
+            incrementing number at the end.
+        _rev:
+          type: integer
+          minimum: 0
+          description: A new revision number when updating a ticket.
+        prepid:
+          type: string
+          pattern: ^[A-Z]{3}-\d{4}(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\d{2}-\d{5}$
+          description: A repetition of the `_id` field.
+        block:
+          type: number
+          format: int
+          minimum: 0
+          maximum: 6
+          description: The proprity block in which the request will be created.
+        threshold:
+          type: number
+          format: float
+          description: FIXME doesn't seem to be used anywhere.
+        meeting:
+          type: string
+          pattern: ^20\d{2}-[01]\d-[0-3]\d$
+          description:
+            The date of the MccM meeting in which this request will be handled, as `YYYY-MM-DD`.
+        history:
+          type: array
+          items:
+            $ref: "#/components/schemas/HistoryItem"
+          description: The history of this ticket.
+        notes:
+          type: string
+          description: Free text notes.
+        pwg:
+          type: string
+          minLength: 3
+          maxLength: 3
+          pattern: ^[A-Z]{3}$
+          description: The PWG this ticket was created for.
+        requests:
+          type: array
+          minItems: 1
+          items:
+            type: string
+          description: The prepId of all (root) requests in this ticket.
+        chains:
+          type: array
+          minItems: 1
+          items:
+            type: string
+          description: |
+            The chained requests that will be combined with the root requests in `requests` to create
+            chained requests.
+        tags:
+          type: array
+          items:
+            type: string
+          description: A list of free text tags that can be used to group related tickets together.
+        repetitions:
+          type: number
+          minimum: 1
+          maximum: 9
+          description: How many times the root requests should be chained with the campaigns.
+        status:
+          type: string
+          enum: ["new", "cancelled", "done"]
+          description: |
+            The current status of this ticket. Initially this is `new`, then it turns to either
+            `done` when the chained requests are created, or `cancelled` if for some reason the ticket
+            is taken back without creating them.
+
+            Support for cancelling tickets seems to have been removed from the new code, but still
+            exists in the old one.
+        generated_chains:
+          type: object
+          description: |
+            All chains created using this ticket. Each key in the object is the prepId of a chain, and
+            the value attached to it is an array of the prepIds of the requests in the chain, except for
+            the root request (so only the requests that were created using this ticket).
+        total_events:
+          type: number
+          minimum: 0
+          description: |
+            The sum of the events in all root requests in the ticket, not considering repetitions nor
+            chains.
+      required:
+        - _id
+        - prepid
+        - block
+        - threshold
+        - meeting
+        - history
+        - notes
+        - pwg
+        - requests
+        - chains
+        - tags
+        - repetitions
+        - status
+        - generated_chains
+        - total_events
+
+    HistoryItem:
+      description: An item in an `history` array.
+      type: object
+      properties:
+        action:
+          # FIXME this seems to be used inconsistently with some histories containing objects
+          type: string
+          description: What was done at the time point.
+        step:
+          type: string
+          description: The status of the item when the entry was added to its history.
+        updater:
+          type: object
+          properties:
+            author_email:
+              type: string
+              format: email
+            author_name:
+              type: string
+            author_username:
+              type: string
+            submission_date:
+              type: string
+              pattern: ^20\d{2}-[01]\d-[0-3]\d-[0-2]\d-[0-5]\d$
+              description: Date and time at which the item was created (`YYYY-MM-DD-HH-mm`)
+          required:
+            - author_email
+            - author_name
+            - author_username
+            - submission_date
+          description: The coordinates of the person who triggered the change.
+      required:
+        - action
+        - updater
