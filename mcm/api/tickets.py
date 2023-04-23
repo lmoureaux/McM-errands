@@ -11,12 +11,12 @@ from ..db import get_db
 import json
 
 
-def search(meeting):
+def search(**kwargs):
     db = get_db().database("mccms")
 
     query = {
-        "selector": {"meeting": meeting},
-        "limit": 10000,
+        "selector": kwargs,
+        "limit": int(1e9),  # Virtually no limit
     }
     (resp, results) = db.resource("_find").post(data=json.dumps(query))
     return results["docs"]

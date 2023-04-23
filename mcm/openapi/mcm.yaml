@@ -11,7 +11,8 @@ paths:
       summary: Find tickets
       description: |
         This endpoint can be used to retrieve mutiple tickets at once. So far,
-        the only available filtering criterion is the MccM meeting date.
+        the only available filtering criteria are the MccM meeting date and the
+        ticket status.
       responses:
         '200':
           description: Retrieved tickets
@@ -27,11 +28,17 @@ paths:
     - name: meeting
       in: query
       description: Filter by meeting date
-      required: true
       schema:
         type: string
         format: date
         example: 2022-04-20
+    - name: status
+      in: query
+      description: Filter by status
+      schema:
+        type: string
+        enum: ["new", "cancelled", "done"]
+
 
   /tickets/{prepId}:
     get:
