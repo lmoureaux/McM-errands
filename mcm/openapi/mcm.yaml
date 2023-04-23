@@ -5,7 +5,33 @@ openapi: 3.0.3
 info:
     title: McM
     version: 0.1.0
-paths: {}
+paths:
+  /tickets/{prepIds}:
+    get:
+      description: Returns a ticket based on its prepId
+      summary: Find ticket by prepId
+      responses:
+        '200':
+          description: Retrieved tickets
+          content:
+            'application/json' :
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+        default:
+          $ref: https://raw.githubusercontent.com/ietf-wg-httpapi/rfc7807bis/main/schema/json/problem.json
+    parameters:
+    - name: prepIds
+      in: path
+      description: ID of tickets to retrieve
+      required: true
+      schema:
+        type: array
+        items:
+          type: string
+      style: simple
+
 components:
   schemas:
     Ticket:
