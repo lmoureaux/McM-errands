@@ -2,13 +2,12 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 import itertools as it
+import json
 
 from connexion.problem import problem
 from pycouchdb.exceptions import NotFound
 
 from ..db import get_db
-
-import json
 
 
 def search(**kwargs):
