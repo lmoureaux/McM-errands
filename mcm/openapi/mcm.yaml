@@ -48,18 +48,17 @@ components:
       properties:
         _id:
           type: string
-          pattern: ^[A-Z]{3}-\d{4}(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\d{2}-\d{5}$
+          pattern: "^[0-9A-Z]{3}-\\d{4}(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\d{2}-\\d{5}$"
           description: |
             A unique identifier for the MccM ticket. The naming convention is PWG-2023Feb13-00001, with
             the PWG form the `pwg` field, the date from the `meeting` field, and an automatically
             incrementing number at the end.
         _rev:
-          type: integer
-          minimum: 0
+          type: string
           description: A new revision number when updating a ticket.
         prepid:
           type: string
-          pattern: ^[A-Z]{3}-\d{4}(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\d{2}-\d{5}$
+          pattern: "^[0-9A-Z]{3}-\\d{4}(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\d{2}-\\d{5}$"
           description: A repetition of the `_id` field.
         block:
           type: number
@@ -88,13 +87,15 @@ components:
           type: string
           minLength: 3
           maxLength: 3
-          pattern: ^[A-Z]{3}$
+          pattern: ^[0-9A-Z]{3}$
           description: The PWG this ticket was created for.
         requests:
           type: array
           minItems: 1
           items:
-            type: string
+            type: array
+            items:
+              type: string
           description: The prepId of all (root) requests in this ticket.
         chains:
           type: array
