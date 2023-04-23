@@ -8,6 +8,19 @@ from pycouchdb.exceptions import NotFound
 
 from ..db import get_db
 
+import json
+
+
+def search(meeting):
+    db = get_db().database("mccms")
+
+    query = {
+        "selector": {"meeting": meeting},
+        "limit": 10000,
+    }
+    (resp, results) = db.resource("_find").post(data=json.dumps(query))
+    return results["docs"]
+
 
 def get(prepId):
     db = get_db().database("mccms")

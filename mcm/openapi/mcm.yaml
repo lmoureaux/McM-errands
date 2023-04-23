@@ -6,6 +6,33 @@ info:
     title: McM
     version: 0.1.0
 paths:
+  /tickets:
+    get:
+      summary: Find tickets
+      description: |
+        This endpoint can be used to retrieve mutiple tickets at once. So far,
+        the only available filtering criterion is the MccM meeting date.
+      responses:
+        '200':
+          description: Retrieved tickets
+          content:
+            'application/json' :
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+        default:
+          $ref: https://raw.githubusercontent.com/ietf-wg-httpapi/rfc7807bis/main/schema/json/problem.json
+    parameters:
+    - name: meeting
+      in: query
+      description: Filter by meeting date
+      required: true
+      schema:
+        type: string
+        format: date
+        example: 2022-04-20
+
   /tickets/{prepId}:
     get:
       description: Returns a ticket based on its prepId
