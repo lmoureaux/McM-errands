@@ -49,7 +49,7 @@ paths:
     parameters:
     - name: prepId
       in: path
-      description: ID of tickets to retrieve
+      description: ID of ticket to retrieve
       required: true
       schema:
         type: string
@@ -87,8 +87,10 @@ components:
           type: number
           format: int
           minimum: 0
-          maximum: 6
-          description: The proprity block in which the request will be created.
+          # FIXME: 60 is invalid but found in the data (should be curated).
+          # The actual maximum is 6.
+          maximum: 60
+          description: The priority block in which the request will be created.
         threshold:
           type: number
           format: float
@@ -115,7 +117,7 @@ components:
         requests:
           type: array
           items:
-            anyOf:
+            oneOf:
             - type: string
             - type: array
               items:
@@ -125,16 +127,23 @@ components:
           type: array
           items:
             type: string
+            nullable: true  # FIXME: Invalid but found in the data (should be curated)
           description: |
             The chained requests that will be combined with the root requests in `requests` to create
             chained requests.
         tags:
           type: array
           items:
-            type: string
+            oneOf:
+            - type: string
+            # FIXME: This is invalid but found in the data (should be curated)
+            # Should always be a string.
+            - type: number
+              format: int
           description: A list of free text tags that can be used to group related tickets together.
         repetitions:
           type: number
+          format: int
           minimum: 1
           maximum: 9
           description: How many times the root requests should be chained with the campaigns.
@@ -156,7 +165,8 @@ components:
             the root request (so only the requests that were created using this ticket).
         total_events:
           type: number
-          minimum: 0
+          format: int
+          minimum: -1
           description: |
             The sum of the events in all root requests in the ticket, not considering repetitions nor
             chains.
