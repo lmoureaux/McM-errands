@@ -163,6 +163,20 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "isort"
+version = "5.12.0"
+description = "A Python utility / library to sort Python imports."
+category = "dev"
+optional = false
+python-versions = ">=3.8.0"
+
+[package.extras]
+colors = ["colorama (>=0.4.3)"]
+requirements-deprecated-finder = ["pip-api", "pipreqs"]
+pipfile-deprecated-finder = ["pip-shims (>=0.5.2)", "pipreqs", "requirementslib"]
+plugins = ["setuptools"]
+
+[[package]]
 name = "itsdangerous"
 version = "2.1.2"
 description = "Safely pass data to untrusted environments and back."
@@ -369,7 +383,7 @@ watchdog = ["watchdog"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "fbffaee38d293794a5209c543076a6eedbf5a0216027a63d5a90c0dd2fd3e027"
+content-hash = "8301d47ae725fcba41de46ba77a6f6e4f3c1868051a3b69e57f8b3b06ca7e199"
 
 [metadata.files]
 attrs = []
@@ -385,6 +399,7 @@ flask = []
 idna = []
 inflection = []
 iniconfig = []
+isort = []
 itsdangerous = []
 jinja2 = []
 jsonschema = []

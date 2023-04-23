@@ -15,7 +15,11 @@ pycouchdb = "^1.14.2"
 [tool.poetry.dev-dependencies]
 pytest = "^7.3.1"
 black = "^23.3.0"
+isort = "^5.12.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
