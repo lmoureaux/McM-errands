@@ -127,6 +127,9 @@ components:
             oneOf:
             - type: string
             - type: array
+              minItems: 2
+              maxItems: 2
+              description: Request range
               items:
                 type: string
           description: The prepId of all (root) requests in this ticket.
