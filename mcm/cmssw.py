@@ -100,3 +100,13 @@ class CMSSW:
             self._env[tokens[1]] = tokens[3]
 
         return self._env
+
+    def run(self, *args, **kwargs):
+        """Runs a command within the CMSSW environment.
+
+        Arguments are the same as subprocess.run, except that `env` gets
+        overwritten.
+        """
+
+        kwargs.update({"env": self.env()})
+        return subprocess.run(*args, **kwargs)
