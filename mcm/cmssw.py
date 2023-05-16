@@ -7,6 +7,7 @@ import argparse
 import os
 import shlex
 import subprocess
+import tempfile
 
 
 def scram_tuple(triplet: str):
@@ -139,9 +140,30 @@ class CMSDriverCommand:
         args, _ = parser.parse_known_intermixed_args(self.args)
         return args.eventcontent
 
-    def run(self, env: CMSSW, **kwargs):
-        """Runs this command in the given CMSSW environment. Keyword arguments
-        are passed to `subprocess.run`.
+    def build_config(self, env: CMSSW):
+        """Generates the CMSSW configuration file to run this command and
+        returns it as a string. This function can take a while to complete,
+        especially when building the configuration involves network access.
+
+        Raises `subprocess.CalledProcessError` on failure.
         """
 
-        return env.run(["cmsDriver.py"] + self.args, **kwargs)
+        with tempfile.TemporaryDirectory() as tmp:
+            config_file = os.path.join(tmp, "config.py")
+            result = self.run(
+                env,
+                ["--python_filename", config_file, "--no_exec"],
+                capture_output=True,
+                check=True,
+            )
+
+            with open(config_file, "r") as f:
+                return f.read()
+
+    def run(self, env: CMSSW, extra_args=[], **kwargs):
+        """Runs this command in the given CMSSW environment. Arguments passed to
+        `extra_args` are added at the end of the command. Other keyword
+        arguments are passed to `subprocess.run`.
+        """
+
+        return env.run(["cmsDriver.py"] + self.args + extra_args, **kwargs)

@@ -83,3 +83,5 @@ def test_cms_driver():
 
     env = FakeEnvironment(lambda cmd: subprocess.CompletedProcess(cmd, 0))
     assert command.run(env).returncode == 0
+
+    # TODO test for build_config()
