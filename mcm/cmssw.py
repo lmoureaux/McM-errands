@@ -56,7 +56,7 @@ class CMSSWEnvironment:
             check: Whether to check that the release exists
         """
 
-        self.scram_arch = scram_tuple(arch) if type(arch) is str else arch
+        self.scram_arch = scram_tuple(arch) if isinstance(arch, str) else arch
         self.version = version
         self._env = None
 
@@ -80,10 +80,9 @@ class CMSSWEnvironment:
         if self._env is not None:  # Use cached version if available.
             return self._env
 
-        self._env = dict()
+        self._env = {}
         output = subprocess.check_output(
             [SCRAM_PATH, "runtime", "-sh"],
-            capture_output=True,
             cwd=self.cvmfs_location(),
             timeout=10,
         )
@@ -180,15 +179,16 @@ class CMSDriverCommand:
         """
 
         with tempfile.TemporaryDirectory() as tmp:
-            config_file = os.path.join(tmp, "config.py")
-            self.check_call(
+            config_path = os.path.join(tmp, "config.py")
+            self.run(
                 env,
-                ["--python_filename", config_file, "--no_exec"],
+                ["--python_filename", config_path, "--no_exec"],
                 capture_output=True,
+                check=True,
             )
 
-            with open(config_file, "r") as f:
-                return f.read()
+            with open(config_path, "r", encoding="utf-8") as config_file:
+                return config_file.read()
 
     def run(self, env: CMSSWEnvironment, extra_args=[], **kwargs):
         """Runs this command in the given CMSSW environment. Arguments passed to
