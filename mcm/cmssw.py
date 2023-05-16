@@ -81,14 +81,13 @@ class CMSSWEnvironment:
             return self._env
 
         self._env = dict()
-        result = subprocess.run(
+        output = subprocess.check_output(
             [SCRAM_PATH, "runtime", "-sh"],
             capture_output=True,
             cwd=self.cvmfs_location(),
             timeout=10,
-            check=True,
         )
-        for line in result.stdout.split(b"\n"):
+        for line in output.split(b"\n"):
             # Lines are in the form: export a="b";
             # We get 5 tokens: ["export", "a", "=", "b", ";"]
             tokens = list(shlex.shlex(line.decode(), posix=True))
@@ -150,11 +149,10 @@ class CMSDriverCommand:
 
         with tempfile.TemporaryDirectory() as tmp:
             config_file = os.path.join(tmp, "config.py")
-            result = self.run(
+            self.check_call(
                 env,
                 ["--python_filename", config_file, "--no_exec"],
                 capture_output=True,
-                check=True,
             )
 
             with open(config_file, "r") as f:
