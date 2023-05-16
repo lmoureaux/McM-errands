@@ -1,7 +1,7 @@
 """Wrapper tools around scram and CMSSW.
 """
 
-__all__ = ["scram_tuple", "scram_version", "CMSSW", "CMSDriverCommand"]
+__all__ = ["scram_tuple", "scram_version", "CMSSWEnvironment", "CMSDriverCommand"]
 
 import argparse
 import os
@@ -127,7 +127,7 @@ class CMSDriverCommand:
     def __init__(self, args: list[str]):
         self.args = args
 
-    def event_content(self):
+    def event_content(self) -> str:
         """Extract the `eventcontent` argument from the command line.
 
         The event content determines what kind of event information will be
@@ -139,7 +139,19 @@ class CMSDriverCommand:
         args, _ = parser.parse_known_intermixed_args(self.args)
         return args.eventcontent
 
-    def streams(self):
+    def steps(self) -> list[str]:
+        """Extract the `steps` argument from the command line. Steps are
+        returned as a list of strings. Step that contain parameters (separated
+        from the step name by a colon, `STEP:param`) are returned without
+        modification.
+        """
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--steps", default="ALL")
+        args, _ = parser.parse_known_intermixed_args(self.args)
+        return args.steps.split(",")
+
+    def streams(self) -> int:
         """Extract the `nStreams` argument from the command line, specifying the
         number of streams to use when processing events.
         """
@@ -149,7 +161,7 @@ class CMSDriverCommand:
         args, _ = parser.parse_known_intermixed_args(self.args)
         return args.nStreams
 
-    def threads(self):
+    def threads(self) -> int:
         """Extract the `nThreads` argument from the command line, specifying the
         number of threads to use when processing events.
         """
