@@ -126,6 +126,16 @@ class CMSDriverCommand:
     def __init__(self, args: list[str]):
         self.args = args
 
+    def conditions(self) -> str:
+        """Extract the `conditions` argument from the command line, aka global
+        tag.
+        """
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--conditions")
+        args, _ = parser.parse_known_intermixed_args(self.args)
+        return args.conditions
+
     def event_content(self) -> str:
         """Extract the `eventcontent` argument from the command line.
 

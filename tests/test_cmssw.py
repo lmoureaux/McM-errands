@@ -76,9 +76,10 @@ class FakeEnvironment:
 
 
 def test_cms_driver():
-    args = ["--eventcontent", "FEVT"]
+    args = ["--conditions", "abc", "--eventcontent", "FEVT"]
     command = cmssw.CMSDriverCommand(args)
     assert command.args == args
+    assert command.conditions() == "abc"
     assert command.event_content() == "FEVT"
     assert command.threads() == 1  # default
     assert command.streams() == 0  # default
