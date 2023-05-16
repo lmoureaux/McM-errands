@@ -30,7 +30,7 @@ def scram_version(version: tuple):
 SCRAM_PATH = "/cvmfs/cms.cern.ch/common/scram"
 
 
-class CMSSW:
+class CMSSWEnvironment:
     """Interface to a specific version of CMSSW.
 
     Objects of this class can be used to run external commands inside a CMSSW
@@ -140,7 +140,7 @@ class CMSDriverCommand:
         args, _ = parser.parse_known_intermixed_args(self.args)
         return args.eventcontent
 
-    def build_config(self, env: CMSSW):
+    def build_config(self, env: CMSSWEnvironment):
         """Generates the CMSSW configuration file to run this command and
         returns it as a string. This function can take a while to complete,
         especially when building the configuration involves network access.
@@ -160,7 +160,7 @@ class CMSDriverCommand:
             with open(config_file, "r") as f:
                 return f.read()
 
-    def run(self, env: CMSSW, extra_args=[], **kwargs):
+    def run(self, env: CMSSWEnvironment, extra_args=[], **kwargs):
         """Runs this command in the given CMSSW environment. Arguments passed to
         `extra_args` are added at the end of the command. Other keyword
         arguments are passed to `subprocess.run`.

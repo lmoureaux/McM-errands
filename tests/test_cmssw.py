@@ -24,7 +24,7 @@ def test_scram_version():
 @pytest.fixture
 def rel():
     """Creates a mock CMSSW instance"""
-    return cmssw.CMSSW("slc6_amd64_gcc700", "CMSSW_10_2_20", check=False)
+    return cmssw.CMSSWEnvironment("slc6_amd64_gcc700", "CMSSW_10_2_20", check=False)
 
 
 def test_cmssw(rel):
@@ -39,7 +39,7 @@ def test_cmssw(rel):
 
     # Check that check=True works and is the default
     with pytest.raises(ValueError) as e_info:
-        rel = cmssw.CMSSW("slc6_amd64_gcc700", "does_not_exist")
+        rel = cmssw.CMSSWEnvironment("slc6_amd64_gcc700", "does_not_exist")
 
 
 def test_cmssw_env(monkeypatch, rel):
