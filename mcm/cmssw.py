@@ -139,6 +139,26 @@ class CMSDriverCommand:
         args, _ = parser.parse_known_intermixed_args(self.args)
         return args.eventcontent
 
+    def streams(self):
+        """Extract the `nStreams` argument from the command line, specifying the
+        number of streams to use when processing events.
+        """
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--nStreams", type=int, default=0)
+        args, _ = parser.parse_known_intermixed_args(self.args)
+        return args.nStreams
+
+    def threads(self):
+        """Extract the `nThreads` argument from the command line, specifying the
+        number of threads to use when processing events.
+        """
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--nThreads", type=int, default=1)
+        args, _ = parser.parse_known_intermixed_args(self.args)
+        return args.nThreads
+
     def build_config(self, env: CMSSWEnvironment):
         """Generates the CMSSW configuration file to run this command and
         returns it as a string. This function can take a while to complete,

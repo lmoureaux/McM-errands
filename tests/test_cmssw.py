@@ -80,6 +80,13 @@ def test_cms_driver():
     command = cmssw.CMSDriverCommand(args)
     assert command.args == args
     assert command.event_content() == "FEVT"
+    assert command.threads() == 1  # default
+    assert command.streams() == 0  # default
+
+    args += ["--nThreads", "8", "--nStreams", "16"]
+    command = cmssw.CMSDriverCommand(args)
+    assert command.threads() == 8
+    assert command.streams() == 16
 
     env = FakeEnvironment(lambda cmd: subprocess.CompletedProcess(cmd, 0))
     assert command.run(env).returncode == 0
