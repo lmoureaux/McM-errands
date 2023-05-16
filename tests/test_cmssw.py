@@ -66,3 +66,20 @@ def test_cmssw_run(monkeypatch, rel):
     result = rel.run(["/usr/bin/env"], check=True, capture_output=True)
 
     assert result.stdout == b"TEST=/test/\n"
+
+
+class FakeEnvironment:
+    """A fake CMSSW environment."""
+
+    def __init__(self, run):
+        self.run = run
+
+
+def test_cms_driver():
+    args = ["--eventcontent", "FEVT"]
+    command = cmssw.CMSDriverCommand(args)
+    assert command.args == args
+    assert command.event_content() == "FEVT"
+
+    env = FakeEnvironment(lambda cmd: subprocess.CompletedProcess(cmd, 0))
+    assert command.run(env).returncode == 0

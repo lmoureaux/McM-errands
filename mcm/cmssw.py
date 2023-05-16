@@ -1,8 +1,9 @@
 """Wrapper tools around scram and CMSSW.
 """
 
-__all__ = ["scram_tuple", "scram_version", "CMSSW"]
+__all__ = ["scram_tuple", "scram_version", "CMSSW", "CMSDriverCommand"]
 
+import argparse
 import os
 import shlex
 import subprocess
@@ -110,3 +111,37 @@ class CMSSW:
 
         kwargs.update({"env": self.env()})
         return subprocess.run(*args, **kwargs)
+
+
+class CMSDriverCommand:
+    """Represents a `cmsDriver.py` command. This class assumes that the user
+    knows how to use `cmsDriver` and does not attempt to validate the arguments.
+    Of course, trying to run an invalid command will fail.
+
+    Attributes:
+        args: The list of arguments passed to `cmsDriver.py`.
+    """
+
+    args: list[str]
+
+    def __init__(self, args: list[str]):
+        self.args = args
+
+    def event_content(self):
+        """Extract the `eventcontent` argument from the command line.
+
+        The event content determines what kind of event information will be
+        available in the output of the command.
+        """
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--eventcontent")
+        args, _ = parser.parse_known_intermixed_args(self.args)
+        return args.eventcontent
+
+    def run(self, env: CMSSW, **kwargs):
+        """Runs this command in the given CMSSW environment. Keyword arguments
+        are passed to `subprocess.run`.
+        """
+
+        return env.run(["cmsDriver.py"] + self.args, **kwargs)
