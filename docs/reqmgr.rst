@@ -19,6 +19,7 @@ to a file ready for analysis: event generation, detector simulation, trigger
 system emulation, reconstruction and formatting as NANOAOD. Each of them gets
 submitted as a separate task to the Request Manager.
 
+.. _config-cache:
 
 The Configuration Cache
 -----------------------
@@ -38,3 +39,105 @@ is done using the `wmupload script`_. These two steps have to be run in a CMSSW
 environment matching the one used to execute the configuration.
 
 .. _wmupload script: https://github.com/cms-PdmV/wmcontrol/blob/master/wmupload.py
+
+
+Specifying Tasks
+----------------
+
+In Request Manager jargon, an execution of a ``cmsDriver.py`` command (or
+rather, of an entry from the :ref:`Configuration Cache <config-cache>`) is
+called a Task. Tasks have additional metadata in order for the Request Manager
+to know where to run the task, what to do with the produced events, and
+facilitate McM bookkeeping. They are specified as a JSON object with the keys
+listed below.
+
+Metadata
+^^^^^^^^
+
+``TaskName``
+    A unique identifier for the task, which can contain pretty much anything as
+    long as it is a string.
+
+``ConfigCacheID``
+    The ID of the configuration stored in the Configuration Cache.
+
+``Campaign``
+    A string used to group similar tasks together. Each campaign name has to be
+    enabled explicitly by the computing team, which PdmV requests through a JIRA
+    ticket. Running "pilot" request is needed to demonstrate that the campaign
+    works as intended.
+
+    .. todo:: Pilot requests are currently not documented.
+
+``AcquisitionEra``
+    A string that will be added to name of any output dataset (see
+    :ref:`Dataset Names <dataset-names>` for more). McM sets this to the name of
+    the campaign.
+
+``PrepID``
+    A name for PdmV bookkeeping, used by Stats2 and McM to map back to where the
+    task originated from.
+
+Datasets
+^^^^^^^^
+
+``KeepOutput``
+    Whether the events should be stored as a new dataset.
+
+``GlobalTag``
+    The ``--conditions`` parameter of ``cmsDriver.py``.
+
+``MCPileup``
+    The full path (``/dataset/processing/DATATIER``) of a secondary dataset used
+    for pileup mixing.
+
+``PrimaryDataset``
+    If the output is to be saved, this is used as the first part of the dataset
+    name. See :ref:`Dataset Names <dataset-names>` for more.
+
+``ProcessingString``
+    Used in the second part of the dataset name. This is in most cases identical
+    to the global tag, but can sometimes contain more information. See
+    :ref:`Dataset Names <dataset-names>` for more.
+
+``ProcessingVersion``
+    This field is set when for some reason a dataset needs to be produced more
+    than once. This can be used by computing when recovering failed tasks, or by
+    McM itself.
+
+Technical
+^^^^^^^^^
+
+``CMSSWVersion``
+    The version of CMSSW in which to run the task, e.g.
+    ``CMSSW_10_2_12_patch1``.
+
+``EventStreams``  (optional)
+    The number of event streams used by the configuration. Identical to the
+    corresponding ``cmsDriver.py`` argument.
+
+``Multicore``
+    The number of threads to allocate for the request.
+
+``ScramArch``
+    A list of scram architectures the request can run in. McM always uses the
+    `official architecture`_ for the corresponding CMSSW release.
+
+.. _official architecture: https://cmssdt.cern.ch/SDT/cgi-bin/ReleasesXML?anytype=1
+
+
+.. _dataset-names:
+
+Dataset Names
+-------------
+
+.. todo:: Fill
+
+
+Task and Step Chains
+--------------------
+
+McM uses two modes of operation of the Request Manager, called TaskChain and
+StepChain. They are conceptually very similar:
+
+.. todo:: Fill
