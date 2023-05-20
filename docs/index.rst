@@ -10,6 +10,7 @@ Welcome to McM's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   reqmgr.rst
 
 
 Indices and tables
