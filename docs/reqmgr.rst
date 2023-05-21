@@ -223,8 +223,65 @@ Technical
 Dataset Names
 -------------
 
-.. todo:: Fill
+Dataset names in CMS follow a strict convention, to which McM contributes
+several ingredients (although the definitive name is determined by computing).
+The pattern is easiest to understand from an example:
 
+.. code-block:: text
+
+    /ADDGravToLL_LambdaT-10000_M-1300To2000_13TeV-pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11_ext1-v3/AODSIM
+
+The path can be split in three parts. The first one specifies the physics
+process contained in the dataset and is fully used-defined following guidelines
+established by the generator group. McM specifies it as the ``PrimaryDataset``
+parameter to Tasks and Steps. The last part is the data format, which is
+passed to ``cmsDriver.py`` when building the configuration (as the
+``--datatier`` argument).
+
+The middle segment is a composite string built from several inputs provided by
+McM. Everything before the first hyphen, ``RunIIFall17DRPremix``, is the name of
+the campaign used to produce the dataset, coming from the ``AcquisitionEra``
+parameter. The version number after the last hyphen is the
+``ProcessingVersion``. Between them is a free text string where McM stores three
+inputs:
+
+* Any customisations (flows) used on top of the campaigns that deviate from the
+  defaults. The names are defined by the PdmV group and separated by
+  underscores. In the present case, the additional settings were about pileup.
+* The global tag, here ``94X_mc2017_realistic_v11``.
+* If the dataset is an extension of another one, this information is also added
+  by appending ``_extN``.
+
+This part of the string is passed to the Request Manager through the
+``ProcessingVersion`` Task or Step parameter.
+
+The convention described above uses a few separator characters: slashes,
+hyphens, and underscores. These should be avoided when they could make the
+parsing ambiguous. The precise rules enforced by computing are as follows:
+
+===================== ========================= =========== ====================
+Parameter             Characters                Length      Notes
+===================== ========================= =========== ====================
+Dataset names         Letters, numbers, _-      1 to 99     Starts with a letter
+Acquisition eras      Letters, numbers, _       Not empty   Starts with a letter
+Campaign names        Letters, numbers, _       1 to 100
+Processing strings    Letters, numbers, _       1 to 100
+Task and step names   Letters, numbers, _-      1 to 50     Starts with a letter
+Request names         Letters, numbers, _-, dot 1 to 150
+CMSSW versions        ``CMSSW_a_b_c(_x)?``
+Global tags           ``a-zA-Z0-9\s\.\-_:``
+===================== ========================= =========== ====================
+
+In addition, the middle part of a dataset name including the acquisition era,
+the processing string, and the version number, may not be longer than 199
+characters. It also cannot start with ``None``, and as a consequence this
+applies to acquisition eras as well.
+
+.. note::
+    These restrictions are defined in the `Request Manager "Lexicon"`_ source
+    file.
+
+.. _Request Manager "Lexicon": https://github.com/dmwm/WMCore/blob/2.2.0.7/src/python/WMCore/Lexicon.py
 
 .. _chaining-tasks:
 
