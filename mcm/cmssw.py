@@ -154,6 +154,22 @@ class CMSDriverCommand:
         args, _ = parser.parse_known_intermixed_args(self.args)
         return args.eventcontent.split(",")
 
+    def fragment_file_name(self) -> str:
+        """
+        Extracts the file name of the generator fragment. This can be passed
+        either as `--evt_type` or as the first argument.
+
+        Note:
+            When `--evt_type` is not present, the first argument is returned
+            even if it starts with `--`. This is consistent with `cmsDriver.py`,
+            but such a command line is very likely broken.
+        """
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--evt_type")
+        args, _ = parser.parse_known_intermixed_args(self.args)
+        return args.evt_type or self.args[0]
+
     def input_is_dbs(self) -> bool:
         """Returns `True` if the command uses a dataset as input.
         This checks if the `filein` argument starts with `dbs:`.

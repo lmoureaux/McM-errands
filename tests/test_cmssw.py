@@ -79,11 +79,12 @@ class FakeEnvironment:
 
 
 def test_cms_driver():
-    args = ["--conditions", "abc", "--eventcontent", "FEVT"]
+    args = ["fragment.py", "--conditions", "abc", "--eventcontent", "FEVT"]
     command = cmssw.CMSDriverCommand(args)
     assert command.args == args
     assert command.conditions() == "abc"
     assert command.event_content() == ["FEVT"]
+    assert command.fragment_file_name() == "fragment.py"
     assert command.threads() == 1  # default
     assert command.streams() == 0  # default
     assert command.steps() == ["ALL"]  # default
@@ -92,13 +93,15 @@ def test_cms_driver():
     assert command.pileup_input() is None  # default
 
     args += ["--nThreads", "8", "--nStreams", "16", "--steps", "GEN,SIM"]
-    args += ["--filein", "lhe:1234"]
+    args += ["--filein", "lhe:1234", "--evt_type", "fragment2.py"]
     command = cmssw.CMSDriverCommand(args)
     assert command.threads() == 8
     assert command.streams() == 16
     assert command.steps() == ["GEN", "SIM"]
     assert command.input_is_dbs() == False
     assert command.input_is_lhe() == True
+    # When there are two fragments, cmsDriver.py uses the one from --evt_type
+    assert command.fragment_file_name() == "fragment2.py"
 
     pileup_args = ["--pileup", "NoPileUp", "--pileup_input", "/Pileup/B/C"]
     command = cmssw.CMSDriverCommand(args + pileup_args)
