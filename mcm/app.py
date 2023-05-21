@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Louis Moureaux <louis.moureaux@cern.ch>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+"""The McM Flask application."""
+
 import connexion
 from connexion.resolver import RestyResolver
 

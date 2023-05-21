@@ -112,6 +112,8 @@ class CMSSWEnvironment:
         """
 
         kwargs.update({"env": self.env()})
+
+        # pylint: disable-next=subprocess-run-check
         return subprocess.run(*args, **kwargs)
 
 
@@ -203,10 +205,13 @@ class CMSDriverCommand:
             with open(config_path, "r", encoding="utf-8") as config_file:
                 return config_file.read()
 
-    def run(self, env: CMSSWEnvironment, extra_args=[], **kwargs):
+    def run(self, env: CMSSWEnvironment, extra_args=None, **kwargs):
         """Runs this command in the given CMSSW environment. Arguments passed to
         `extra_args` are added at the end of the command. Other keyword
         arguments are passed to `subprocess.run`.
         """
+
+        if extra_args is None:
+            extra_args = []
 
         return env.run(["cmsDriver.py"] + self.args + extra_args, **kwargs)
