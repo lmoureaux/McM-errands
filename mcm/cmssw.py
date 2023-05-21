@@ -141,7 +141,7 @@ class CMSDriverCommand:
         args, _ = parser.parse_known_intermixed_args(self.args)
         return args.conditions
 
-    def event_content(self) -> str:
+    def event_content(self) -> list[str]:
         """Extract the `eventcontent` argument from the command line.
 
         The event content determines what kind of event information will be
@@ -151,7 +151,7 @@ class CMSDriverCommand:
         parser = argparse.ArgumentParser()
         parser.add_argument("--eventcontent")
         args, _ = parser.parse_known_intermixed_args(self.args)
-        return args.eventcontent
+        return args.eventcontent.split(",")
 
     def steps(self) -> list[str]:
         """Extract the `steps` argument from the command line. Steps are
