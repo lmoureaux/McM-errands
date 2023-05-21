@@ -41,6 +41,8 @@ environment matching the one used to execute the configuration.
 .. _wmupload script: https://github.com/cms-PdmV/wmcontrol/blob/master/wmupload.py
 
 
+.. _task-specification:
+
 Specifying Tasks
 ----------------
 
@@ -125,10 +127,6 @@ specify additional information about the input:
 ``InputDataset``
     If provided, specifies that events from an existing dataset will be
     reprocessed. This should contain the full path as shown in DAS.
-
-    .. todo::
-        Do we need to specify the number of events in this case? McM does add
-        them.
 
 ``LheInputFiles``
     Whether the Task or Step uses LHE files stored on EOS.
@@ -328,6 +326,94 @@ being ``TYPEoutput``, where ``TYPE`` is the name of the event type passed to
 ``cmsDriver.py``.
 
 
+Request Injection and Approval
+------------------------------
+
+Submitting Tasks or Steps to the Request Manager is done by uploading a
+JSON file to the service, containing the Tasks and Steps definition as well as
+some additional metadata described below. This is done using an old script
+called `wmcontrol`_, which essentially posts it (as in HTTP ``POST``) to
+``https://cmsweb.cern.ch/reqmgr2/data/request``. The endpoint returns a JSON
+object containing the request ID. Like for most of the Request Manager,
+authentication using an X.509 grid certificate is required.
+
+.. _wmcontrol: https://github.com/cms-PdmV/wmcontrol/blob/master/wmcontrol.py
+
+.. note::
+    ``wmcontrol.py`` will refuse to submit a request without any saved output.
+
+After a request has been successfully injected, it still needs to be approved
+before it can start running. This is done by making an HTTP ``PUT`` request to
+``https://cmsweb.cern.ch/reqmgr2/data/request/<Request ID>`` with content
+``{"RequestStatus": "assignment-approved"}``, which initiates the
+`Request Manager State Machine`_.
+
+.. _Request Manager State Machine:
+    https://cms-pdmv.gitbook.io/project/computing/untitled-2
+
+.. note::
+    It is unclear whether McM could initiate other Request Manager state
+    transitions directly. :ref:`Force Complete <reqmgr-force-complete>` is
+    currently handled in a completely different way.
+
+Submission Format
+^^^^^^^^^^^^^^^^^
+
+The JSON file submitted to the Request Manager contains a single dictionary with
+the following keys:
+
+``Group``
+    The group doing the request, for McM this is always ``ppd``.
+
+``Requestor``
+    The user doing the request, for McM this is always the PdmV service account,
+    a.k.a. ``pdmvserv``.
+
+``Multicore``
+    McM always sets this to 1.
+
+``PrepID``
+    An arbitrary name for PdmV bookkeeping. McM sets this to ``task_`` followed
+    by the PrepID of the chained request or request used when submitting.
+
+``ProcessingVersion``
+    McM always sets this to 1.
+
+``RequestPriority``
+    The priority assigned to the request, as an integer between 0 and 10000. McM
+    sets this from the Step or Task with the highest defined priority.
+
+``RequestString``
+    An arbitrary name. McM sets this to the same value as ``PrepID``
+
+``SubRequestType``
+    Set to ``Pilot``, ``ReDigi``, or ``MC`` according to what the Steps or Tasks
+    need and in this order of priority.
+
+``TaskN`` or ``StepN``
+    For increasing ``N`` starting from 1, the tasks being submitted, see
+    :ref:`task-specification`.
+
+``TaskChain`` or ``StepChain``
+    The number of Tasks (resp. Steps) beings submitted.
+
+The following values are copied from the fist Task or Step:
+``AcquisitionEra``,
+``ProcessingString``, and
+``ScramArch``.
+
+The following values are copied from the last Task or Step:
+``AcquisitionEra``,
+``Campaign``,
+``CMSSWVersion``,
+``GlobalTag``,
+``Memory``,
+``ProcessingString``
+``ScramArch``,
+``SizePerEvent``, and
+``TimePerEvent``.
+
+
 .. _task-step-chains:
 
 Task and Step Chains
@@ -357,3 +443,11 @@ The main differences are summarized below:
 
 In addition to these transformations, McM replaces any occurrence of ``task`` in
 values with ``step``. The reason for this is obscure.
+
+
+.. _reqmgr-force-complete:
+
+Forced Completion
+-----------------
+
+.. todo:: Fill
