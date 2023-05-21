@@ -142,6 +142,8 @@ specify additional information about the input:
 
     .. todo:: And what does it mean?
 
+.. _processing-tasks:
+
 Processing Tasks
 ^^^^^^^^^^^^^^^^
 
@@ -288,7 +290,42 @@ applies to acquisition eras as well.
 Chaining Tasks and Steps
 ------------------------
 
-.. todo:: Fill
+When multiple ``cmsDriver.py`` commands need to be executed one after the other,
+it is possible to send a chain of Tasks or Steps to the Request Manager. To
+understand how this is done, one needs to dive into the internals of CMSSW and
+``cmsDriver.py``.
+
+A single execution of CMSSW can be used to produce multiple kinds of output
+datasets simultaneously. Each output corresponds to an ``OutputModule`` added to
+the configuration. In order to chain a Task or Step after another, one needs to
+specify the Task or Step to retrieve the input from as well as the correct
+output module (see :ref:`processing-tasks`). This is where things get
+complicated, because there is no way in CMSSW to specify the data format
+expected as input.
+
+McM circumvents this problem by maintaining a hand-crafted list of what kind of
+outputs can be used for what kind of processing (the `datatier_input`_ setting).
+When pairing Tasks or Steps one after another, it looks at the first processing
+step in the second command and tries to match it with the output of the first
+command. If it cannot find a match, it falls back to the first output of the
+first command and hopes for the best.
+
+.. _datatier_input: https://cms-pdmv.cern.ch/mcm/settings?prepid=datatier_input
+
+.. note::
+    At the time of this writing, irrelevant content appears to have been added
+    to the ``datatier_input`` dictionary, conflating datatiers and event
+    contents. All commands inspected by the author use a single output module
+    and most of them use the fallback code path.
+
+    Restricting McM support to ``cmsDriver.py`` commands with a single output
+    module and relying on the user not screwing things up would allow to get rid
+    of this brittle implementation.
+
+In order to determine which output module is present in a configuration, McM
+inspects the ``cmsDriver.py`` command and relies on their conventional name
+being ``TYPEoutput``, where ``TYPE`` is the name of the event type passed to
+``cmsDriver.py``.
 
 
 .. _task-step-chains:
