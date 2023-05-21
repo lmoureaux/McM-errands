@@ -11,6 +11,7 @@ import os
 import shlex
 import subprocess
 import tempfile
+from typing import Optional
 
 
 def scram_tuple(triplet: str):
@@ -152,6 +153,40 @@ class CMSDriverCommand:
         parser.add_argument("--eventcontent")
         args, _ = parser.parse_known_intermixed_args(self.args)
         return args.eventcontent.split(",")
+
+    def input_is_dbs(self) -> bool:
+        """Returns `True` if the command uses a dataset as input.
+        This checks if the `filein` argument starts with `dbs:`.
+        """
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--filein")
+        args, _ = parser.parse_known_intermixed_args(self.args)
+        return bool(args.filein and args.filein.startswith("dbs:"))
+
+    def input_is_lhe(self) -> bool:
+        """Returns `True` if the input uses LHE files.
+        This checks if the `filein` argument starts with `lhe:`.
+        """
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--filein")
+        args, _ = parser.parse_known_intermixed_args(self.args)
+        return bool(args.filein and args.filein.startswith("lhe:"))
+
+    def pileup_input(self) -> Optional[str]:
+        """Extracts the `pileup_input` argument from the command line.
+        Returns `None` if neither pileup nor premix should not be used.
+        """
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--datamix")
+        parser.add_argument("--pileup")
+        parser.add_argument("--pileup_input")
+        args, _ = parser.parse_known_intermixed_args(self.args)
+        if args.pileup in ("", "NoPileUp") and args.datamix != "PreMix":
+            return None
+        return args.pileup_input
 
     def steps(self) -> list[str]:
         """Extract the `steps` argument from the command line. Steps are

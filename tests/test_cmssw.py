@@ -87,12 +87,26 @@ def test_cms_driver():
     assert command.threads() == 1  # default
     assert command.streams() == 0  # default
     assert command.steps() == ["ALL"]  # default
+    assert command.input_is_dbs() == False  # default
+    assert command.input_is_lhe() == False  # default
+    assert command.pileup_input() is None  # default
 
     args += ["--nThreads", "8", "--nStreams", "16", "--steps", "GEN,SIM"]
+    args += ["--filein", "lhe:1234"]
     command = cmssw.CMSDriverCommand(args)
     assert command.threads() == 8
     assert command.streams() == 16
     assert command.steps() == ["GEN", "SIM"]
+    assert command.input_is_dbs() == False
+    assert command.input_is_lhe() == True
+
+    pileup_args = ["--pileup", "NoPileUp", "--pileup_input", "/Pileup/B/C"]
+    command = cmssw.CMSDriverCommand(args + pileup_args)
+    assert command.pileup_input() is None
+
+    pileup_args = ["--datamix", "PreMix", "--pileup_input", "/Premix/B/C"]
+    command = cmssw.CMSDriverCommand(args + pileup_args)
+    assert command.pileup_input() == "/Premix/B/C"
 
     env = FakeEnvironment(lambda cmd: subprocess.CompletedProcess(cmd, 0))
     assert command.run(env).returncode == 0
