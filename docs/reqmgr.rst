@@ -446,8 +446,19 @@ values with ``step``. The reason for this is obscure.
 
 
 .. _reqmgr-force-complete:
+.. _reqmgr-invalidate:
 
-Forced Completion
------------------
+Forced Completion and Invalidation
+----------------------------------
 
-.. todo:: Fill
+It is needed to stop the production of a sample before it is complete, for
+instance when jobs get stuck and cannot be recovered easily. In such cases, the
+``force-complete`` state transition in the `Request Manager State Machine`_ can
+be used. This is done in McM by adding the relevant PrepID to a list that the
+CMS Unified daemon checks every hour.
+
+Another action following this pattern is dataset invalidation. Here, the list
+can contain either requests or datasets. The CMS Unified daemon checks the list
+of invalidations every hour and triggers an ``abort`` or ``reject`` transition
+(in addition to invalidating all linked datasets). Finally, McM recieves an
+acknowledgement informing it that the action was performed.
