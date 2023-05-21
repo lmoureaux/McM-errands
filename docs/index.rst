@@ -1,7 +1,5 @@
-.. McM documentation master file, created by
-   sphinx-quickstart on Sat May 20 23:14:16 2023.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. SPDX-FileCopyrightText: Louis Moureaux <louis.moureaux@cern.ch>
+.. SPDX-License-Identifier: AGPL-3.0-or-later
 
 Welcome to McM's documentation!
 ===============================
