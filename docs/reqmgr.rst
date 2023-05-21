@@ -52,6 +52,14 @@ to know where to run the task, what to do with the produced events, and
 facilitate McM bookkeeping. They are specified as a JSON object with the keys
 listed below.
 
+.. note::
+    This is a curated list for McM usage. Documentation can be found on the
+    `Request Manager wiki`_ and technical specifications in the
+    `ReqMgr2 repository`_.
+
+.. _Request Manager wiki: https://github.com/dmwm/WMCore/wiki/Request-Types-Arguments
+.. _ReqMgr2 repository: https://github.com/dmwm/WMCore/tree/master/doc/createSpecs
+
 Metadata
 ^^^^^^^^
 
