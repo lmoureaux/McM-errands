@@ -333,7 +333,27 @@ being ``TYPEoutput``, where ``TYPE`` is the name of the event type passed to
 Task and Step Chains
 --------------------
 
-McM uses two modes of operation of the Request Manager, called TaskChain and
-StepChain. They are conceptually very similar:
+McM uses two modes of operation of the Request Manager called Task Chain and
+Step Chain. Both allow the submission of a chain of multiple Tasks (for Task
+Chains) or Steps (for Step Chains) to be run in sequence over each event. They
+differ in the way the commands are executed: a Task Chain runs them
+sequentially, while a Step Chain is able to run them concurrently on a single
+machine. The Request Manager wiki has a `detailed comparison`_. McM does not
+implement any automatic decision-making regarding Task or Step Chains and leaves
+the choice to the user, as a property of each Chained Campaign.
 
-.. todo:: Fill
+.. _detailed comparison: https://github.com/dmwm/WMCore/wiki/TaskChain-vs-StepChain
+
+Task Chain and Step Chain submissions have a lot in common, except for a few
+fields changing name or being moved around. Any Task Chain can be turned into a
+Step Chain, but this is a destructive operation and the reverse is not possible.
+The main differences are summarized below:
+
+* The ``RequestType`` must be set to ``TaskChain`` or ``StepChain`` as
+  appropriate;
+* ``Task`` in the name of any property becomes ``Step``;
+* ``TimePerEvent`` and ``SizePerEvent`` are added up for all Steps and moved to
+  the top level.
+
+In addition to these transformations, McM replaces any occurrence of ``task`` in
+values with ``step``. The reason for this is obscure.
