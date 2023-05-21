@@ -46,7 +46,8 @@ Specifying Tasks
 
 In Request Manager jargon, an execution of a ``cmsDriver.py`` command (or
 rather, of an entry from the :ref:`Configuration Cache <config-cache>`) is
-called a Task. Tasks have additional metadata in order for the Request Manager
+called a Step or a Task (see :ref:`task-step-chains` for the distinction). Tasks
+and Steps have additional metadata in order for the Request Manager
 to know where to run the task, what to do with the produced events, and
 facilitate McM bookkeeping. They are specified as a JSON object with the keys
 listed below.
@@ -54,7 +55,7 @@ listed below.
 Metadata
 ^^^^^^^^
 
-``TaskName``
+``TaskName`` or ``StepName``
     A unique identifier for the task, which can contain pretty much anything as
     long as it is a string.
 
@@ -103,7 +104,90 @@ Datasets
 ``ProcessingVersion``
     This field is set when for some reason a dataset needs to be produced more
     than once. This can be used by computing when recovering failed tasks, or by
-    McM itself.
+    McM itself. Also used as part of the dataset name, see
+    :ref:`Dataset Names <dataset-names>` for more.
+
+Generator Tasks
+^^^^^^^^^^^^^^^
+
+The Request Manager supports submitting multiple Tasks or Steps running
+sequentially on the same events. For the first Task or Step, one needs to
+specify additional information about the input:
+
+``InputDataset``
+    If provided, specifies that events from an existing dataset will be
+    reprocessed. This should contain the full path as shown in DAS.
+
+    .. todo::
+        Do we need to specify the number of events in this case? McM does add
+        them.
+
+``LheInputFiles``
+    Whether the Task or Step uses LHE files stored on EOS.
+
+``RequestNumEvents``
+    The number of events to produce.
+
+``Seeding``
+    McM sets this explicitly to ``AutomaticSeeding`` for generator tasks. This
+    is also the Request Manager default.
+
+    .. todo:: And what does it mean?
+
+Processing Tasks
+^^^^^^^^^^^^^^^^
+
+The Request Manager supports submitting multiple Tasks or Steps running
+sequentially on the same events. Tasks after the first are called
+`Processing Tasks` and one needs to specify where their input should come from.
+See :ref:`chaining-tasks` for how McM fills these fields:
+
+``InputTask`` or ``InputStep``
+    Which other task (in the same submission) should provide events to this one.
+
+``InputFromOutputModule``
+    Which CMSSW output module the events should be taken from.
+
+Performance Information
+^^^^^^^^^^^^^^^^^^^^^^^
+
+In order to split jobs optimally and direct the Task to an appropriate site, the
+Request Manager needs some information about the resources needed for
+processing. For Steps, this information is provided for each submission as a
+whole (see :ref:`task-step-chains`).
+
+``FilterEfficiency``
+    The average efficiency of event production: some tasks may discard some
+    events, in which case this is smaller than 1.
+
+    .. todo::
+        Can apparently also be specified for Steps, although McM does not do it.
+
+``Memory``
+    The maximum amount of memory needed by the Task, in megabytes.
+
+``SizePerEvent``
+    The average size of events produced by the Task, in kilobytes.
+
+``TimePerEvent``
+    The time needed to produce one event, in seconds.
+
+    .. todo:: Is there some normalization for older CPU models?
+
+Job Splitting
+^^^^^^^^^^^^^
+
+Request Manager job splitting is very similar to CRAB. The `CRAB documentation`_
+is hence a useful resource.
+
+``SplittingAlgo``
+    How the processing should be split in jobs. McM uses ``EventBased`` for
+    generator Tasks and Steps and ``EventAwareLumiBased`` otherwise.
+
+``EventsPerLumi``
+   How many events should be included in each LumiSection.
+
+.. _CRAB documentation: https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRAB3ConfigurationFile
 
 Technical
 ^^^^^^^^^
@@ -114,7 +198,7 @@ Technical
 
 ``EventStreams``  (optional)
     The number of event streams used by the configuration. Identical to the
-    corresponding ``cmsDriver.py`` argument.
+    corresponding ``cmsDriver.py`` argument, if present.
 
 ``Multicore``
     The number of threads to allocate for the request.
@@ -133,6 +217,16 @@ Dataset Names
 
 .. todo:: Fill
 
+
+.. _chaining-tasks:
+
+Chaining Tasks and Steps
+------------------------
+
+.. todo:: Fill
+
+
+.. _task-step-chains:
 
 Task and Step Chains
 --------------------
